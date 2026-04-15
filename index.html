@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RoutineFlow — Daily Habit Tracker</title>
+  <meta name="description" content="Track your daily routines, build streaks, and level up your life with RoutineFlow — a beautiful habit tracker app." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Animated background orbs -->
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- App Shell -->
+  <div class="app-container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">🌊</div>
+        <span class="logo-text">RoutineFlow</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" id="nav-today" onclick="switchView('today')">
+          <span class="nav-icon">✦</span> Today
+        </button>
+        <button class="nav-item" id="nav-manage" onclick="switchView('manage')">
+          <span class="nav-icon">⊞</span> Manage
+        </button>
+        <button class="nav-item" id="nav-stats" onclick="switchView('stats')">
+          <span class="nav-icon">◈</span> Stats
+        </button>
+      </nav>
+
+      <div class="sidebar-streak">
+        <div class="streak-label">Current Streak</div>
+        <div class="streak-count" id="sidebar-streak-count">0</div>
+        <div class="streak-fire">🔥</div>
+      </div>
+
+      <div class="sidebar-quote" id="motivational-quote">
+        <p>"Small steps every day lead to giant leaps over time."</p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="hamburger" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="header-date" id="header-date">
+            <div class="date-day" id="date-day">Tuesday</div>
+            <div class="date-full" id="date-full">April 15, 2026</div>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="time-display" id="live-time">00:00</div>
+          <button class="reset-btn" id="reset-day-btn" onclick="confirmResetDay()" title="Reset today's checks">↺</button>
+        </div>
+      </header>
+
+      <!-- TODAY VIEW -->
+      <section class="view active" id="view-today">
+
+        <!-- Progress Card -->
+        <div class="progress-card glass-card">
+          <div class="progress-meta">
+            <div>
+              <div class="progress-title">Today's Progress</div>
+              <div class="progress-subtitle" id="progress-subtitle">0 of 0 tasks done</div>
+            </div>
+            <div class="progress-percentage" id="progress-pct">0%</div>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" id="progress-bar"></div>
+            </div>
+          </div>
+          <div class="progress-badges" id="progress-badges"></div>
+        </div>
+
+        <!-- Time Groups -->
+        <div class="routine-groups" id="routine-groups">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-state" id="today-empty" style="display:none;">
+          <div class="empty-icon">📋</div>
+          <h2>No routines yet!</h2>
+          <p>Go to <b>Manage</b> to add your first routine task.</p>
+          <button class="btn-primary" onclick="switchView('manage')">+ Add Routine</button>
+        </div>
+
+      </section>
+
+      <!-- MANAGE VIEW -->
+      <section class="view" id="view-manage">
+        <div class="view-header">
+          <h1 class="view-title">Manage Routines</h1>
+          <button class="btn-primary" id="open-add-modal" onclick="openAddModal()">+ Add Task</button>
+        </div>
+
+        <div class="manage-groups" id="manage-groups">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="empty-state" id="manage-empty" style="display:none;">
+          <div class="empty-icon">✨</div>
+          <h2>Start building your routines</h2>
+          <p>Add tasks to build a powerful daily routine.</p>
+          <button class="btn-primary" onclick="openAddModal()">+ Add First Task</button>
+        </div>
+      </section>
+
+      <!-- STATS VIEW -->
+      <section class="view" id="view-stats">
+        <div class="view-header">
+          <h1 class="view-title">Your Stats</h1>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card glass-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-value" id="stat-streak">0</div>
+            <div class="stat-label">Day Streak</div>
+          </div>
+          <div class="stat-card glass-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="stat-total-done">0</div>
+            <div class="stat-label">Total Completions</div>
+          </div>
+          <div class="stat-card glass-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-value" id="stat-days-tracked">0</div>
+            <div class="stat-label">Days Tracked</div>
+          </div>
+          <div class="stat-card glass-card">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-value" id="stat-best-streak">0</div>
+            <div class="stat-label">Best Streak</div>
+          </div>
+        </div>
+
+        <div class="glass-card weekly-card">
+          <h2 class="weekly-title">Last 7 Days</h2>
+          <div class="weekly-bars" id="weekly-bars">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <div class="glass-card heatmap-card">
+          <h2 class="weekly-title">Task Completion Rate</h2>
+          <div class="task-rates" id="task-rates">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ADD / EDIT TASK MODAL -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal glass-card" id="task-modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Add New Task</h2>
+        <button class="modal-close" onclick="closeAddModal()">✕</button>
+      </div>
+      <form id="task-form" onsubmit="saveTask(event)">
+        <div class="form-group">
+          <label for="task-name">Task Name</label>
+          <input type="text" id="task-name" placeholder="e.g., Morning meditation" required maxlength="60" />
+        </div>
+        <div class="form-group">
+          <label for="task-emoji">Icon (emoji)</label>
+          <div class="emoji-grid" id="emoji-grid">
+            <!-- Populated by JS -->
+          </div>
+          <input type="text" id="task-emoji" placeholder="Or type any emoji..." maxlength="4" />
+        </div>
+        <div class="form-group">
+          <label for="task-time">Time of Day</label>
+          <div class="radio-group" id="time-radio-group">
+            <label class="radio-pill" for="r-morning">
+              <input type="radio" name="task-time" id="r-morning" value="morning" checked />
+              🌅 Morning
+            </label>
+            <label class="radio-pill" for="r-afternoon">
+              <input type="radio" name="task-time" id="r-afternoon" value="afternoon" />
+              ☀️ Afternoon
+            </label>
+            <label class="radio-pill" for="r-evening">
+              <input type="radio" name="task-time" id="r-evening" value="evening" />
+              🌙 Evening
+            </label>
+            <label class="radio-pill" for="r-anytime">
+              <input type="radio" name="task-time" id="r-anytime" value="anytime" />
+              ⏰ Anytime
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="task-note">Note (optional)</label>
+          <input type="text" id="task-note" placeholder="e.g., 10 minutes, no phone" maxlength="80" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeAddModal()">Cancel</button>
+          <button type="submit" class="btn-primary" id="modal-save-btn">Add Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONFIRM MODAL -->
+  <div class="modal-overlay" id="confirm-overlay" onclick="closeConfirm(event)">
+    <div class="modal glass-card confirm-modal" id="confirm-modal">
+      <div class="confirm-icon" id="confirm-icon">⚠️</div>
+      <h2 class="confirm-title" id="confirm-title">Are you sure?</h2>
+      <p class="confirm-body" id="confirm-body"></p>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeConfirmModal()">Cancel</button>
+        <button class="btn-danger" id="confirm-yes-btn">Yes, do it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CELEBRATION OVERLAY -->
+  <div class="celebrate-overlay" id="celebrate-overlay" style="display:none;" aria-hidden="true">
+    <div class="celebrate-content">
+      <div class="celebrate-emoji">🎉</div>
+      <div class="celebrate-text">All Done!</div>
+      <div class="celebrate-sub">Amazing work today!</div>
+    </div>
+    <div class="confetti-wrap" id="confetti-wrap"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
